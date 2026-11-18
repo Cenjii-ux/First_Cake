@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Birthday Cake</title>
+<style>
+  :root{
+    --pink:#f45b87;
+    --pink-dark:#e84674;
+    --cream:#fff5e7;
+    --choco:#7b4b3d;
+    --choco2:#936052;
+    --plate:#fff;
+    --gold:#ffd45a;
+    --text:#fff8fb;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;font-family:Georgia, "Times New Roman", serif}
+  body{
+    min-height:100vh;
+    overflow:hidden;
+    color:var(--text);
+    background:
+      radial-gradient(circle at 50% 35%, rgba(255,255,255,.12), transparent 32%),
+      linear-gradient(180deg,#f96b95 0%,#f45b87 100%);
+  }
+
+  .app{
+    width:100%;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    position:relative;
+  }
+
+  header{
+    width:100%;
+    height:76px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#0d1015;
+    border-bottom:1px solid rgba(255,255,255,.12);
+    position:relative;
+    z-index:10;
+  }
+  header h1{
+    margin:0;
+    font-size:27px;
+    letter-spacing:.5px;
+  }
+
+  main{
+    width:min(720px,100%);
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    position:relative;
+    padding:30px 16px 24px;
+  }
+
+  #instruction{
+    min-height:36px;
+    margin:0 0 6px;
+    text-align:center;
+    font-size:25px;
+    font-style:italic;
+    letter-spacing:.5px;
+    opacity:.95;
+    transition:.35s ease;
+  }
+
+  #stage{
+    width:min(650px,100%);
+    height:470px;
+    position:relative;
+    touch-action:none;
+    user-select:none;
+    cursor:default;
+  }
+
+  .cake{
+    position:absolute;
+    left:50%;
+    top:110px;
+    width:330px;
+    height:275px;
+    transform:translateX(-50%);
+  }
+
+  .plate{
+    position:absolute;
+    left:50%;
+    bottom:15px;
+    width:380px;
+    height:27px;
+    transform:translateX(-50%);
+    background:linear-gradient(#fff,#e9e9e9);
+    border-radius:50%;
+    box-shadow:0 9px 12px rgba(95,27,48,.18);
+    opacity:0;
+  }
+  .plate::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:9px;
+    width:320px;
+    height:15px;
+    transform:translateX(-50%);
+    border-radius:50%;
+    background:rgba(220,220,220,.35);
+  }
+
+  .layer{
+    position:absolute;
+    left:50%;
+    width:300px;
+    height:67px;
+    transform:translateX(-50%) translateY(-440px);
+    border-radius:14px 14px 9px 9px;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 17px, rgba(255,255,255,.08) 18px 20px),
+      linear-gradient(90deg,var(--choco2),var(--choco),#865447);
+    box-shadow:inset 0 -7px rgba(65,30,24,.16), 0 6px 0 rgba(100,35,50,.10);
+    opacity:0;
+  }
+
+  .layer::before{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    top:-5px;
+    height:12px;
+    border-radius:50%;
+    background:#a66b5b;
+  }
+
+  .layer1{bottom:42px}
+  .layer2{bottom:100px;width:286px}
+  .layer3{bottom:158px;width:272px}
+
+  .drop-layer{
+    opacity:1;
+    animation:dropIn .75s cubic-bezier(.2,.85,.25,1) forwards;
+  }
+  .layer1.drop-layer{animation-delay:.25s}
+  .layer2.drop-layer{animation-delay:1s}
+  .layer3.drop-layer{animation-delay:1.75s}
+
+  @keyframes dropIn{
+    0%{opacity:0;transform:translateX(-50%) translateY(-440px) rotate(-4deg)}
+    65%{opacity:1;transform:translateX(-50%) translateY(12px) rotate(1deg)}
+    82%{transform:translateX(-50%) translateY(-5px) rotate(-.5deg)}
+    100%{opacity:1;transform:translateX(-50%) translateY(0) rotate(0)}
+  }
+
+  .icing{
+    position:absolute;
+    left:50%;
+    bottom:155px;
+    width:286px;
+    height:55px;
+    transform:translateX(-50%) translateY(-350px);
+    background:var(--cream);
+    border-radius:13px 13px 18px 18px;
+    opacity:0;
+    z-index:4;
+    box-shadow:0 3px 5px rgba(80,35,30,.12);
+  }
+  .icing::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:-26px;
+    height:42px;
+    background:var(--cream);
+    clip-path:polygon(0 0,100% 0,100% 24%,92% 29%,84% 25%,76% 76%,69% 83%,64% 27%,56% 35%,50% 29%,43% 69%,37% 73%,32% 30%,25% 34%,20% 82%,15% 78%,11% 29%,0 24%);
+  }
+  .icing.animate{
+    opacity:1;
+    animation:icingDrop .85s cubic-bezier(.2,.85,.25,1) 2.55s forwards;
+  }
+  @keyframes icingDrop{
+    0%{transform:translateX(-50%) translateY(-350px);opacity:0}
+    70%{transform:translateX(-50%) translateY(10px);opacity:1}
+    100%{transform:translateX(-50%) translateY(0);opacity:1}
+  }
+
+  .candles{
+    position:absolute;
+    left:50%;
+    bottom:214px;
+    width:276px;
+    height:75px;
+    transform:translateX(-50%);
+    z-index:6;
+  }
+
+  .candle{
+    position:absolute;
+    bottom:0;
+    width:15px;
+    height:56px;
+    border-radius:5px 5px 2px 2px;
+    background:repeating-linear-gradient(-45deg,#fff 0 7px,#ff8ca9 7px 13px);
+    box-shadow:inset -2px 0 rgba(120,50,70,.12);
+    transform:translateY(-430px);
+    opacity:0;
+  }
+  .candle:nth-child(1){left:4px}
+  .candle:nth-child(2){left:39px}
+  .candle:nth-child(3){left:74px}
+  .candle:nth-child(4){left:109px}
+  .candle:nth-child(5){left:144px}
+  .candle:nth-child(6){left:179px}
+  .candle:nth-child(7){left:214px}
+  .candle:nth-child(8){left:249px}
+
+  .candle.drop{
+    opacity:1;
+    animation:candleDrop .65s cubic-bezier(.2,.85,.25,1) forwards;
+  }
+  .candle:nth-child(1).drop{animation-delay:3.45s}
+  .candle:nth-child(2).drop{animation-delay:3.62s}
+  .candle:nth-child(3).drop{animation-delay:3.79s}
+  .candle:nth-child(4).drop{animation-delay:3.96s}
+  .candle:nth-child(5).drop{animation-delay:4.13s}
+  .candle:nth-child(6).drop{animation-delay:4.30s}
+  .candle:nth-child(7).drop{animation-delay:4.47s}
+  .candle:nth-child(😎.drop{animation-delay:4.64s}
+
+  @keyframes candleDrop{
+    0%{opacity:0;transform:translateY(-430px) rotate(-5deg)}
+    70%{opacity:1;transform:translateY(8px) rotate(2deg)}
+    100%{opacity:1;transform:translateY(0) rotate(0)}
+  }
+
+  .wick{
+    position:absolute;
+    left:50%;
+    top:-10px;
+    width:2px;
+    height:10px;
+    transform:translateX(-50%);
+    background:#333;
+    border-radius:2px;
+  }
+
+  .flame{
+    position:absolute;
+    left:50%;
+    top:-36px;
+    width:16px;
+    height:25px;
+    transform:translateX(-50%);
+    border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+    background:linear-gradient(#fff6a0,#ffc928 48%,#ff7b25);
+    box-shadow:0 0 18px 7px rgba(255,211,71,.5);
+    animation:flicker .16s infinite alternate;
+    transform-origin:50% 100%;
+  }
+  @keyframes flicker{
+    to{transform:translateX(-50%) scale(.88,1.08) rotate(3deg)}
+  }
+  .blown .flame{
+    animation:blowOut .45s ease forwards;
+  }
+  @keyframes blowOut{
+    0%{opacity:1;transform:translateX(-50%) scale(1)}
+    100%{opacity:0;transform:translateX(-50%) translate(20px,-20px) scale(.15)}
+  }
+  .blown .wick{background:#111}
+
+  .smoke{
+    position:absolute;
+    left:50%;
+    top:-42px;
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    background:rgba(255,255,255,.55);
+    opacity:0;
+  }
+  .blown .smoke{
+    animation:smoke 1.2s ease-out forwards;
+  }
+  @keyframes smoke{
+    0%{opacity:0;transform:translate(-50%,8px) scale(.5)}
+    20%{opacity:.6}
+    100%{opacity:0;transform:translate(-10px,-45px) scale(2.5)}
+  }
+
+  .hint{
+    position:absolute;
+    left:50%;
+    bottom:5px;
+    transform:translateX(-50%);
+    width:100%;
+    text-align:center;
+    font-size:16px;
+    opacity:0;
+    transition:opacity .5s;
+  }
+  .hint.show{opacity:.9}
+
+  #swipeLine{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:0;
+    height:4px;
+    transform:translate(-50%,-50%);
+    background:rgba(255,255,255,.75);
+    border-radius:10px;
+    opacity:0;
+    pointer-events:none;
+  }
+
+  #message{
+    position:absolute;
+    left:50%;
+    bottom:10px;
+    width:min(90%,600px);
+    transform:translateX(-50%) translateY(30px);
+    text-align:center;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .9s, transform .9s;
+  }
+  #message.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
+  #message h2{
+    margin:0 0 8px;
+    font-size:34px;
+    text-shadow:0 3px 10px rgba(120,20,55,.22);
+  }
+  #message p{
+    margin:0;
+    font-size:22px;
+    line-height:1.45;
+  }
+
+  .spark{
+    position:absolute;
+    width:7px;height:7px;
+    border-radius:50%;
+    background:#fff8d7;
+    opacity:0;
+  }
+  .spark.show{animation:spark 1.8s ease-out forwards}
+  @keyframes spark{
+    0%{opacity:0;transform:scale(.3) translate(0,0)}
+    15%{opacity:1}
+    100%{opacity:0;transform:scale(1) translate(var(--x),var(--y))}
+  }
+
+  #replay{
+    position:absolute;
+    right:18px;
+    bottom:16px;
+    border:1px solid rgba(255,255,255,.35);
+    background:rgba(255,255,255,.12);
+    color:white;
+    border-radius:999px;
+    padding:10px 15px;
+    font-family:inherit;
+    cursor:pointer;
+    backdrop-filter:blur(6px);
+  }
+  #replay:hover{background:rgba(255,255,255,.2)}
+
+  @media(max-width:520px){
+    header{height:68px}
+    header h1{font-size:25px}
+    main{padding-top:24px}
+    #instruction{font-size:22px}
+    #stage{height:430px}
+    .cake{transform:translateX(-50%) scale(.84);transform-origin:50% 100%}
+    .plate{transform:translateX(-50%) scale(.84)}
+    .hint{font-size:14px}
+    #message h2{font-size:29px}
+    #message p{font-size:19px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header><h1>Birthday Cake</h1></header>
+
+  <main>
+    <div id="instruction">Preparing something special...</div>
+
+    <div id="stage" aria-label="Interactive birthday cake">
+      <div class="cake">
+        <div class="plate"></div>
+
+        <div class="layer layer1"></div>
+        <div class="layer layer2"></div>
+        <div class="layer layer3"></div>
+
+        <div class="icing"></div>
+
+        <div class="candles">
+          <div class="candle"><span class="wick"></span><span class="flame"></span><span class="smoke"></span></div>
+          <div class="candle"><span class="wick"></span><span class="flame"></span><span class="smoke"></span></div>
+          <div class="candle"><span class="wick"></span><span class="flame"></span><span class="smoke"></span></div>
+          <div class="candle"><span class="wick"></span><span class="flame"></span><span class="smoke"></span></div>
+          <div class="candle"><span class="wick"></span><span class="flame"></span><span class="smoke"></span></div>
+          <div class="candle"><span class="wick"></span><span class="flame"></span><span class="smoke"></span></div>
+          <div class="candle"><span class="wick"></span><span class="flame"></span><span class="smoke"></span></div>
+          <div class="candle"><span class="wick"></span><span class="flame"></span><span class="smoke"></span></div>
+        </div>
+      </div>
+
+      <div id="swipeLine"></div>
+      <div class="hint" id="hint">Swipe from left → right to blow out the candles</div>
+      <div id="message">
+        <h2>Happy Birthday! 🎂</h2>
+        <p id="messageText">May your day be filled with happiness, laughter, and beautiful memories. ❤️</p>
+      </div>
+    </div>
+
+    <button id="replay" type="button">Replay</button>
+  </main>
+</div>
+
+<script>
+  // ==========================
+  // EDIT YOUR BIRTHDAY MESSAGE
+  // ==========================
+  const birthdayMessage =
+    "May your day be filled with happiness, laughter, and beautiful memories. ❤️";
+
+  const stage = document.getElementById("stage");
+  const instruction = document.getElementById("instruction");
+  const hint = document.getElementById("hint");
+  const message = document.getElementById("message");
+  const messageText = document.getElementById("messageText");
+  const swipeLine = document.getElementById("swipeLine");
+  const replay = document.getElementById("replay");
+
+  const layers = [...document.querySelectorAll(".layer")];
+  const icing = document.querySelector(".icing");
+  const candles = [...document.querySelectorAll(".candle")];
+  const plate = document.querySelector(".plate");
+
+  let sequenceDone = false;
+  let blown = false;
+  let dragging = false;
+  let startX = 0;
+  let currentX = 0;
+
+  function resetCake(){
+    sequenceDone = false;
+    blown = false;
+    dragging = false;
+
+    layers.forEach(l => l.classList.remove("drop-layer"));
+    icing.classList.remove("animate");
+    candles.forEach(c => c.classList.remove("drop", "blown"));
+    plate.style.opacity = "0";
+    hint.classList.remove("show");
+    message.classList.remove("show");
+    swipeLine.style.opacity = "0";
+    swipeLine.style.width = "0";
+
+    instruction.textContent = "Preparing something special...";
+
+    // Restart CSS animations cleanly.
+    void stage.offsetWidth;
+
+    plate.style.transition = "opacity .5s";
+    plate.style.opacity = "1";
+
+    layers.forEach(l => l.classList.add("drop-layer"));
+    icing.classList.add("animate");
+    candles.forEach(c => c.classList.add("drop"));
+
+    setTimeout(() => {
+      sequenceDone = true;
+      instruction.textContent = "Make a wish...";
+      hint.classList.add("show");
+    }, 5450);
+  }
+
+  function createSparkles(){
+    for(let i=0;i<18;i++){
+      const s = document.createElement("span");
+      s.className = "spark";
+      s.style.left = (20 + Math.random()*60) + "%";
+      s.style.top = (25 + Math.random()*45) + "%";
+      s.style.setProperty("--x", ((Math.random()-.5)*180) + "px");
+      s.style.setProperty("--y", ((Math.random()-.5)*130) + "px");
+      stage.appendChild(s);
+      setTimeout(() => s.classList.add("show"), i*55);
+      setTimeout(() => s.remove(), 2200);
+    }
+  }
+
+  function blowCandles(){
+    if(!sequenceDone || blown) return;
+
+    blown = true;
+    candles.forEach((c,i) => {
+      setTimeout(() => c.classList.add("blown"), i*55);
+    });
+
+    hint.classList.remove("show");
+    instruction.textContent = "Wish made. ❤️";
+
+    setTimeout(() => {
+      messageText.textContent = birthdayMessage;
+      message.classList.add("show");
+      createSparkles();
+    }, 650);
+  }
+
+  function pointerStart(e){
+    if(!sequenceDone || blown) return;
+    dragging = true;
+    startX = e.clientX;
+    currentX = startX;
+    swipeLine.style.opacity = "1";
+    swipeLine.style.left = startX + "px";
+    swipeLine.style.width = "0px";
+  }
+
+  function pointerMove(e){
+    if(!dragging || blown) return;
+
+    currentX = e.clientX;
+    const distance = currentX - startX;
+
+    if(distance > 0){
+      swipeLine.style.left = startX + "px";
+      swipeLine.style.width = distance + "px";
+    }
+
+    // Require a clearly left-to-right swipe.
+    if(distance >= Math.min(190, stage.clientWidth * .32)){
+      dragging = false;
+      swipeLine.style.opacity = "0";
+      blowCandles();
+    }
+  }
+
+  function pointerEnd(){
+    if(!dragging) return;
+    dragging = false;
+    swipeLine.style.opacity = "0";
+    swipeLine.style.width = "0";
+  }
+
+  stage.addEventListener("pointerdown", pointerStart);
+  stage.addEventListener("pointermove", pointerMove);
+  stage.addEventListener("pointerup", pointerEnd);
+  stage.addEventListener("pointercancel", pointerEnd);
+  stage.addEventListener("pointerleave", pointerEnd);
+
+  replay.addEventListener("click", resetCake);
+
+  resetCake();
+</script>
+</body>
+</html>
